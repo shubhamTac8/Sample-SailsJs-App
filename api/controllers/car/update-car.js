@@ -1,3 +1,4 @@
+const sanitizeHtml = require('sanitize-html');
 
 module.exports = {
   friendlyName: 'Update Car by ID',
@@ -11,13 +12,27 @@ module.exports = {
     make: {
       type: 'string',
       description: 'The updated make of the car.',
+      custom: (value) => {
+        if (value) {
+          return sanitizeHtml(value);
+        }
+        return value;
+      },
     },
     model: {
       type: 'string',
       description: 'The updated model of the car.',
+      custom: (value) => {
+        if (value) {
+          return sanitizeHtml(value);
+        }
+        return value;
+      },
     },
     year: {
       type: 'number',
+      min: 1900, 
+      max: new Date().getFullYear(), 
       description: 'The updated year of the car.',
     },
     price: {
@@ -27,10 +42,22 @@ module.exports = {
     fuel_type: {
       type: 'string',
       description: 'The updated fuel type of the car.',
+      custom: (value) => {
+        if (value) {
+          return sanitizeHtml(value);
+        }
+        return value;
+      },
     },
     transmission: {
       type: 'string',
       description: 'The updated transmission of the car.',
+      custom: (value) => {
+        if (value) {
+          return sanitizeHtml(value);
+        }
+        return value;
+      },
     }
   },
   exits: {
@@ -50,14 +77,13 @@ module.exports = {
       responseType: 'serverError',
     },
   },
-  fn: async function (inputs, exits) {
+  fn: async function ({ id, ...inputs }, exits) {
     try {
-      const { id } = inputs;
       const car = await Car.findOne({ id });
       if (!car) {
         return exits.notFound({message:'Car not found'});
       }
-      const updatedCar = await Car.updateOne({ id }).set({ ...inputs });
+      const updatedCar = await Car.update({ id }).set(inputs).fetch();
       if (!updatedCar) {
         return exits.badRequest({message:'Invalid request data or no changes made.'});
       }
@@ -70,3 +96,4 @@ module.exports = {
     }
   },
 };
+

@@ -1,3 +1,6 @@
+
+const sanitizeHtml = require('sanitize-html');
+
 module.exports = {
   friendlyName: 'Add car',
   description: 'Insert a new car record',
@@ -6,14 +9,22 @@ module.exports = {
     make: {
       type: 'string',
       required: true,
+      custom: function (value) {
+        return sanitizeHtml(value);
+      }
     },
     model: {
       type: 'string',
       required: true,
+      custom: function (value) {
+        return sanitizeHtml(value);
+      }
     },
     year: {
       type: 'number',
       required: true,
+      min: 1900, 
+      max: new Date().getFullYear(), 
     },
     price: {
       type: 'number',
@@ -47,14 +58,13 @@ module.exports = {
   },
 
   fn: async function (inputs, exits) {
-    try {    
+    try { 
       const newCar = await Car.create(inputs).fetch();
       return exits.success({
         message: 'Car record created successfully',
         data: newCar,
       });
     } catch (error) {
-      sails.log(error);
       if (error.invalidAttributes) {
         return exits.badRequest({
           message: 'Invalid input data',

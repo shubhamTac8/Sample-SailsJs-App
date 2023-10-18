@@ -10,7 +10,7 @@ module.exports = {
   attributes: {
     make: { type: 'string', required: true, maxLength: 50 },
     model: { type: 'string', required: true, maxLength: 50 },
-    year: { type: 'number', required: true },
+    year: { type: 'number', required: true , min: 1900,  max: new Date().getFullYear() },
     price: { type: 'number', required: true, columnType: 'decimal(10,2)' },
     fuel_type: { type: 'string', required: true, maxLength: 20 },
     transmission: { type: 'string', required: true, maxLength: 20 },
